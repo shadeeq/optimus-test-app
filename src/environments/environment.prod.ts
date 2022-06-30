@@ -1,3 +1,7 @@
 export const environment = {
-  production: true
+  production: true,
+  auth: {
+    login: 'testuser1',
+    password: 'Angular11'
+  }
 };

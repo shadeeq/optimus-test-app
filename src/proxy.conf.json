@@ -1,0 +1,7 @@
+{
+  "*": {
+    "target": "https://optimus-dev1-us.telrock.com",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
