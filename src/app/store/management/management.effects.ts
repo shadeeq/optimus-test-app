@@ -3,12 +3,10 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
 import { HttpClientService } from "../../services/http-client.service";
 import {
-  distinctUntilChanged,
-  distinctUntilKeyChanged,
-  EMPTY,
   map,
   switchMap,
-  tap
+  tap,
+  withLatestFrom
 } from "rxjs";
 import * as ManagementActions from '../management/management.actions';
 import { LoaderService } from "../../services/loader.service";
@@ -28,26 +26,17 @@ export class ManagementEffects {
   loadManagements$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ManagementActions.getManagements),
-      switchMap(() => {
-        this.httpService.getManagements$.next(true);
-        return this.httpService.getManagements$;
-      }),
-      distinctUntilChanged(),
-      switchMap((getManagements: boolean) => getManagements ? this.store : EMPTY),
-      distinctUntilKeyChanged('measurements'),
-      tap(() => this.loaderService.startLoading()),
-      map((store: StoreItem) => {
+      withLatestFrom(this.store.select('group')),
+      withLatestFrom(this.store.select('measurements')),
+      map(([[action, group], measurements]) => {
         return ({
-          description: store.group.selectedDescription,
-          measurements: store.measurements.selectedMeasurement
+          description: group.selectedDescription,
+          measurements: measurements.selectedMeasurement
         })
       }),
       switchMap(({ description, measurements }) => this.httpService.getManagementInfo(description, measurements)
         .pipe(
-          tap(() => {
-            this.httpService.getManagements$.next(false);
-            this.loaderService.stopLoading();
-          })
+          tap(() => this.loaderService.stopLoading())
         )
       ),
       map((managements: Management[]) => ManagementActions.loadManagements({ managements })),

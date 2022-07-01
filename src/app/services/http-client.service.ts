@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { BehaviorSubject, Observable, pluck } from "rxjs";
+import { Observable, pluck } from "rxjs";
 import { apis } from "../../environments/apis";
 import { Management } from "../models/store-interface";
 
@@ -8,8 +8,6 @@ import { Management } from "../models/store-interface";
   providedIn: 'root'
 })
 export class HttpClientService {
-
-  getManagements$ = new BehaviorSubject(false);
 
   constructor( private http: HttpClient ) {
   }
