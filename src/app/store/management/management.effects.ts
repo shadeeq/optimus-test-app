@@ -26,6 +26,7 @@ export class ManagementEffects {
   loadManagements$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ManagementActions.getManagements),
+      tap(() => this.loaderService.startLoading()),
       withLatestFrom(this.store.select('group')),
       withLatestFrom(this.store.select('measurements')),
       map(([[action, group], measurements]) => {
